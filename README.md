@@ -8,4 +8,4 @@ hi
  - bullet 2
  - somthing
 
-![img](prac_class.jpg)
+![img](img.jpg)
