@@ -7,3 +7,5 @@ hi
  - teset 1
  - bullet 2
  - somthing
+
+![img](img/prac_class.jpg)
