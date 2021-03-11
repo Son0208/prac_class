@@ -1,0 +1,45 @@
+---
+title: "Rmarkdown Practice"
+author: "Myeonho Son"
+date: '2021 3 11 '
+output: html_document
+---
+
+## Rmarkdown Test
+
+```{r}
+data(iris)
+library(knitr)
+kable(iris[1:10,])
+```
+
+
+include=TRUE
+```{r, include=TRUE}
+1+1
+```
+ 
+ 
+include=FALSE
+```{r, include=FALSE}
+1+1
+```
+
+
+echo=TRUE
+```{r, echo=TRUE}
+1+1
+```
+ 
+ 
+echo=FALSE 
+```{r, echo=FALSE}
+1+1
+```
+
+
+## Latex math equations
+
+$$ \sum_{i=0}^n X_i $$
+
+$$ \sum_{i=0}^n \frac{1}{X_i} $$
