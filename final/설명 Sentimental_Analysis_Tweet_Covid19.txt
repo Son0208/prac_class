@@ -1,0 +1,115 @@
+ln ~10 : 
+모듈, 데이터 불러오기 
+EDA
+
+
+
+ln 4 : 
+train = train[['ID','Tweet']].join(train.Labels.str.join("|").str.get_dummies())
+train.rename(columns = {' ' : '10'}, inplace = True)  # train.columns = ['ID', 'Tweet', '10', '0','1','2','3','4','5','6','7','8','9']
+train = train[['ID','Tweet','0','1','2','3','4','5','6','7','8','9','10']]
+#  Label 컬럼에 대해 원핫인코딩.
+
+
+
+ln 11 :
+tokenizer = Tokenizer(num_words = max_features)
+# creates a tokenizer 
+tokenizer.fit_on_texts(list(train_sentences))  
+# 토큰화 수행
+
+
+
+ln 12 : 
+tokenized_train = tokenizer.texts_to_sequences(train_sentences)
+tokenized_test = tokenizer.texts_to_sequences(test_sentences) 
+print(tokenized_train[1])
+# 단어를 정수값 인덱스로 변환하여 리스트로 저장
+ 
+
+
+ln 13 : 
+각 단어에 대한 인덱스가 부여된 것을 확인.
+단어 집합의 크기.
+
+
+
+ln 14 : 
+데이터별 단어 길이 분포
+
+
+
+ln 15 :
+maxlen = 31
+X_train = pad_sequences(tokenized_train, maxlen = maxlen)
+X_test = pad_sequences(tokenized_test, maxlen = maxlen)
+# 단어수를 maxlen = 31개로 맞추라는 뜻입니다. 
+즉 단어수가 31개보다 크면 31개 까지 맞추고 31개보다 작으면 모자라는 부분을 0으로 채웁니다.
+
+
+
+ln 16 : 
+x = Embedding(max_features, embed_size)(inp)
+# 단어와 벡터를 연관짓는 word embeddings. Embedding(단어 집합의 크기, 임베딩 벡터의 차원)
+단어집합의 크기는 패딩을 위한 토큰인 0번 단어를 고려하며 +1을 해서 저장.
+
+x = LSTM(60, return_sequences=True, name='lstm_layer')(x)
+# LSTM Layer
+LSTM은 RNN(순환신경망)에서 발생하는 기울기 소실문제를 방지하기 위해
+다음층으로 값을 넘길지 안넘길지를 관리하는 단계를 기존 RNN에 추가한 개선된 로직
+
+x = GlobalMaxPool1D()(x) 
+# MaxPool1D : 피처 맵의 크기를 줄이거나 주요한 특징을 뽑아내기 위해 사용하는 기법
+
+x = Dropout(0.1)(x) 
+# Dropout : 과적합 문제를 정규화를 통해서 해결하는 가장 대표적인 방법
+
+x = Dense(50, activation="relu")(x) 
+# Dense : 신경망 구조를 이루는 기본적 형태의 층을 만든다. 
+   활성함수 relu
+
+x = Dense(11, activation="sigmoid")(x) 
+# 0,1 사이의 확률값을 뽑아내는 활성화함수 sigmoid. 11개 label에 대해 각각의 확률값.
+
+
+
+ln 17 : 
+def ~
+# 평가지표인 macro-f1을 측정하기 위해 함수 정의
+
+
+model.compile(loss='binary_crossentropy',
+          optimizer= "adam",
+          metrics=[f1])
+# Loss(손실함수), Optimizer(최적화), Metrics(평가지표) 설정
+* 손실함수로 categorical_crossentropy 사용 시도 -> 더 높은 Loss
+
+
+
+ln 19 :
+batch size, epochs, validation split 설정.
+훈련데이터의 20% 검정데이터로 설정.
+
+
+
+ln 20 :
+train, test 데이터에 대한 f1과 loss 그래프.
+
+"과적합 방지를 위해 테스트 데이터의 성능이 낮아지기 전에 훈련을 멈추는 것이 바람직하다고 했는데, 
+테스트 데이터의 성능이 올라갈 여지가 있음에도 훈련을 덜 한 상태를 반대로 과소적합(Underfitting)이라고 합니다. 
+과소 적합은 훈련 자체가 부족한 상태이므로 과대 적합과는 달리 훈련 데이터에 대해서도 보통 정확도가 낮다는 특징이 있습니다."
+ㄴ 위를 참고하여 epochs 6 정도에서 loss가 올라가기 시작했지만 훈련데이터의 성능(f1)이 0.9 이상이 되도록 ln 31에서 epochs를 설정.
+
+
+
+ln 21 : 
+prediction = model.predict(X_test)
+prediction = (prediction>0.5)
+prediction = pd.DataFrame(prediction)
+prediction = prediction.applymap(lambda x: 1 if x else 0)
+prediction
+# 결과에서 확률값이 0.5가 넘는 것들에 대해서만 남기고 1로 변환.
+
+
+
+제출 스코어 : 0.31
