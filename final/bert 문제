@@ -1,0 +1,4 @@
+https://tonnykwon.github.io/blog/machine/2020-01-16-Multi-Label%20Classification/
+
+bert 코드들 문제점 :
+sentimental analysis의 multi label data를 multi class model에 적용시켜야 함
