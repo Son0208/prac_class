@@ -1,3 +1,0 @@
-# prac_class
-
-hi
